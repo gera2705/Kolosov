@@ -2,13 +2,13 @@ package com.example.kolosovfintech
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.kolosovfintech.databinding.ActivityMainBinding
 import com.example.kolosovfintech.repository.Repository
 import com.example.rtest.MainViewModel
 import com.example.rtest.MainViewModelFactory
@@ -17,36 +17,27 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
 
-    private lateinit var gif: ImageView
-
-    private lateinit var button: ImageButton
+    private val binding by viewBinding(ActivityMainBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        gif = findViewById(R.id.gif_img)
-        button = findViewById(R.id.next_button)
 
         val repo = Repository()
         val viewModelFactory = MainViewModelFactory(repo)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.getPost()
 
+        getRandomGif()
 
-
-        get()
-
-
-        button.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             viewModel.getPost()
-            viewModel.meResponse.observe(this , Observer {
-                    responce ->
-                Log.d("Resp" , responce.body().toString())
-                if(responce.isSuccessful){
-                    Log.d("Resp" , responce.body()?.description.toString())
-                    putGif(responce.body()?.gifURL.toString() , "")
-                }else{
+            viewModel.meResponse.observe(this, Observer { responce ->
+                Log.d("Resp", responce.body().toString())
+                if (responce.isSuccessful) {
+                    Log.d("Resp", responce.body()?.description.toString())
+                    setGif(responce.body()?.gifURL.toString())
+                } else {
                     Log.d("Resp", responce.errorBody().toString())
                 }
 
@@ -54,22 +45,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun get(){
-        viewModel.meResponse.observe(this , Observer {
-                responce ->
+    private fun getRandomGif() {
+        viewModel.meResponse.observe(this, Observer { responce ->
 
-            if(responce.isSuccessful){
-                Log.d("Resp" , responce.body()?.description.toString())
-                putGif(responce.body()?.gifURL.toString() , "")
-            }else{
+            if (responce.isSuccessful) {
+                Log.d("Resp", responce.body()?.description.toString())
+                setDescription(responce.body()?.description.toString())
+                setGif(responce.body()?.gifURL.toString())
+            } else {
                 Log.d("Resp", responce.errorBody().toString())
             }
-
         })
     }
 
-
-    private fun putGif(URL: String, description: String) {
+    private fun setGif(URL: String) {
 
         Glide.with(this@MainActivity)
             .asGif()
@@ -79,6 +68,10 @@ class MainActivity : AppCompatActivity() {
             .fallback(R.drawable.ic_error_image)
             .fitCenter()
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-            .into(gif)
+            .into(binding.gifImg)
+    }
+
+    private fun setDescription(description: String) {
+        binding.descriptionText.text = description
     }
 }
