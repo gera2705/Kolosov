@@ -1,4 +1,4 @@
-package com.example.rtest
+package com.example.kolosovfintech
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,12 +11,12 @@ import retrofit2.Response
 
 class MainViewModel(private val repository: Repository): ViewModel() {
 
-    val meResponse: MutableLiveData<Response<Post>> = MutableLiveData()
+    val apiResponse: MutableLiveData<Response<Post>> = MutableLiveData()
 
     fun getPost() {
         viewModelScope.launch {
             val response = repository.getPost()
-            meResponse.value = response
+            apiResponse.value = response
         }
     }
 }

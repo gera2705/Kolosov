@@ -2,6 +2,7 @@ package com.example.rtest
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.kolosovfintech.MainViewModel
 import com.example.kolosovfintech.repository.Repository
 
 class MainViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {

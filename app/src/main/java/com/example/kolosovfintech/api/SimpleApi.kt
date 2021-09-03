@@ -1,4 +1,4 @@
-package com.example.rtest.api
+package com.example.kolosovfintech.api
 
 import com.example.kolosovfintech.model.Post
 import retrofit2.Response
