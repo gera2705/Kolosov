@@ -1,12 +1,7 @@
 package com.example.kolosovfintech.repository
 
-import com.example.kolosovfintech.model.Post
-import com.example.kolosovfintech.api.RetrofitInstance
-import retrofit2.Response
+import com.example.kolosovfintech.api.ApiHelper
 
-class Repository {
-
-    suspend fun getPost(): Response<Post> {
-        return RetrofitInstance.api.getPost()
-    }
+class Repository(private val apiHelper: ApiHelper) {
+    suspend fun getUsers() = apiHelper.getUsers()
 }
