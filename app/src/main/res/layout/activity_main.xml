@@ -28,28 +28,68 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="32dp" />
 
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_name">
+
+        <RadioButton
+            android:id="@+id/latest_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Последние"
+            android:checked="true"
+            />
+
+        <RadioButton
+            android:id="@+id/top_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Лучшие"
+            />
+
+        <RadioButton
+            android:id="@+id/hot_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Горячие"
+            />
+
+
+    </RadioGroup>
+
+
+
+
     <TextView
         android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="@string/app_name"
         android:textColor="@color/black"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
         app:layout_constraintStart_toStartOf="@+id/guideline_vertical"
-        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/gif_card"
         android:layout_width="350dp"
         android:layout_height="250dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:cardCornerRadius="15dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="@+id/guideline_vertical"
-        app:layout_constraintTop_toBottomOf="@+id/app_name">
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup">
 
         <ImageView
             android:id="@+id/gif_img"

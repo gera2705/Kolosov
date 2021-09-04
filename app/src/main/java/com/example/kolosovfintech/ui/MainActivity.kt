@@ -14,7 +14,10 @@ import com.example.kolosovfintech.Status
 import com.example.kolosovfintech.api.ApiHelper
 import com.example.kolosovfintech.api.RetrofitInstance
 import com.example.kolosovfintech.databinding.ActivityMainBinding
+import com.example.kolosovfintech.model.Data
 import com.example.kolosovfintech.model.Post
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private val binding by viewBinding(ActivityMainBinding::bind)
 
-    private var gifsList: ArrayList<Post>? = arrayListOf<Post>()
+    private var gifsList: ArrayList<Post>? = arrayListOf()
     private var positionCount = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,16 +33,52 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setupViewModel()
-        setupObservers()
+
+        when (Id.itemNumber){
+            1 -> getGif("top", 1)
+            2 -> getGif("latest" , 1)
+            3 -> getGif("hot" , 1)
+        }
 
         binding.nextButton.setOnClickListener {
-            if (positionCount == gifsList?.size) {
-                setupObservers()
+
+            if (positionCount == 5) {
+                positionCount = 1
+                gifsList?.clear()
+                binding.gifImg.setImageResource(0)
+
+                when(Id.itemNumber){
+                    1 -> getGif("latest", 2)
+                    2 -> getGif("top", 2)
+                    3 -> getGif("hot"  ,0)
+                }
+
             } else {
                 setGif(gifsList?.get(positionCount)?.gifURL)
                 setDescription(gifsList?.get(positionCount)?.description)
+                positionCount++
             }
-            positionCount++
+        }
+
+        binding.latestButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            Id.itemNumber = 1
+            this.recreate()
+        }
+
+        binding.hotButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            Id.itemNumber = 3
+            this.recreate()
+        }
+
+        binding.topButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            Id.itemNumber = 2
+            this.recreate()
         }
 
         binding.backButton.setOnClickListener {
@@ -77,30 +116,39 @@ class MainActivity : AppCompatActivity() {
         binding.descriptionText.text = description
     }
 
-    private fun setupObservers() {
-        viewModel.getUsers().observe(this, Observer {
+    private fun getGif(category: String, page: Int) {
+        viewModel.getGif(category, page).observe(this, Observer {
             it?.let { resource ->
                 when (resource.status) {
                     Status.SUCCESS -> {
 
-                        val post:Post? = resource.data
-                        gifsList?.add(post!!)
+                        val post: Data? = resource.data
 
-                        setGif(post!!.gifURL)
-                        setDescription(post.description)
+                        Log.d("TAG", post.toString())
 
-                        Log.d("TAG" , resource.data.toString())
-                        Log.d("TAG" , gifsList?.size.toString())
-                        Log.d("TAG" , gifsList.toString())
+                        post?.dataModelList.let { it1 ->
+                            if (it1 != null) {
+                                gifsList?.addAll(it1)
+                            }
+                        }
+
+                        Log.d("TAG", gifsList.toString())
+
+                        setGif(post!!.dataModelList[0].gifURL)
+                        setDescription(post.dataModelList[0].description)
                     }
                     Status.ERROR -> {
                         Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     }
                     Status.LOADING -> {
-
+                        Toast.makeText(this , "Загрузка" , Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         })
     }
+}
+
+object Id {
+    var itemNumber: Int? = 1
 }
