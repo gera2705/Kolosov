@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     private fun getDefiniteGif() {
         when (Id.typeId) {
             1 -> getGif("latest", (0..2600).random())
-            2 -> getGif("top", (0..2600).random())
+            2 -> getGif("top", (0..2300).random())
             3 -> getGif("hot", (0..2600).random())
         }
     }
