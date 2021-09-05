@@ -1,7 +1,6 @@
 package com.example.kolosovfintech.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -74,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         binding.rebootButton.setOnClickListener {
             binding.rebootButton.isVisible = false
             binding.rebootButton.isEnabled = false
-            if (gifsList?.size == 0) {
+            if (gifsList?.size == 0 || gifsList?.size == positionCount-1) {
                 getDefiniteGif()
             } else {
                 setGif(gifsList?.get(positionCount - 1)?.gifURL)
@@ -134,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                     isFirstResource: Boolean
                 ): Boolean {
                     binding.gifCard.visibility = View.VISIBLE
+                    binding.descriptionText.text = "Ошибка загрузки гифки"
                     binding.rebootButton.isVisible = true
                     binding.rebootButton.isEnabled = true
                     return false
@@ -190,9 +190,11 @@ class MainActivity : AppCompatActivity() {
                     }
                     Status.ERROR -> {
                         binding.rebootButton.isVisible = true
+                        binding.nextButton.isEnabled = false
+                        binding.backButton.isEnabled = false
                         binding.gifCard.visibility = View.VISIBLE
                         binding.gifImg.setImageResource(R.drawable.ic_error_image)
-                        binding.descriptionText.text = "Ошибка"
+                        binding.descriptionText.text = "Ошибка подкличения к серверу"
                         binding.rebootButton.isEnabled = true
                         Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     }
