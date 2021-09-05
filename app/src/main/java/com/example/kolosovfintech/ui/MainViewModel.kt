@@ -6,7 +6,6 @@ import androidx.lifecycle.liveData
 import com.example.kolosovfintech.Resource
 import com.example.kolosovfintech.repository.Repository
 import kotlinx.coroutines.Dispatchers
-import retrofit2.http.Path
 
 class MainViewModel(private val repository: Repository): ViewModel() {
 

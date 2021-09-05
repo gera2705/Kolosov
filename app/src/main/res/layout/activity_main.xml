@@ -147,6 +147,17 @@
         app:layout_constraintStart_toStartOf="@+id/guideline_vertical"
         app:layout_constraintTop_toBottomOf="@+id/description_text" />
 
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:indeterminate="true"
+        app:layout_constraintBottom_toBottomOf="@+id/gif_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/gif_card"
+        app:layout_constraintVertical_weight="6" />
+
     <Button
         android:id="@+id/reboot_button"
         android:layout_width="wrap_content"
@@ -156,7 +167,6 @@
         android:text="@string/reboot_button_text"
         android:textColor="@color/main_color"
         android:textStyle="bold"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/gif_card"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
         app:layout_constraintHorizontal_bias="0.482"

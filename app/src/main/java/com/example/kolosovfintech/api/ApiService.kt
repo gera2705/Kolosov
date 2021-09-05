@@ -10,5 +10,8 @@ interface ApiService {
     suspend fun getRandomGif(): Post
 
     @GET("/{category}/{pageNumber}?json=true")
-    suspend fun getGifsCategoryList(@Path("category") category:String , @Path("pageNumber") pageNumber:Int) : Data
+    suspend fun getGifsCategoryList(
+        @Path("category") category: String,
+        @Path("pageNumber") pageNumber: Int
+    ): Data
 }

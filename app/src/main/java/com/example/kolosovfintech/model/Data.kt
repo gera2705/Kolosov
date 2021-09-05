@@ -7,7 +7,7 @@ data class Data(
 
     @SerializedName("result")
     @Expose
-    var dataModelList: List<Post> ,
+    var dataModelList: List<Post>,
 
     @SerializedName("totalCount")
     @Expose
