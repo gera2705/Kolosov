@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     private var gifsList: ArrayList<Post>? = arrayListOf()
     private var positionCount = 1
-    private var typeId: Int? = 1
+   // private var typeId: Int? = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,27 +84,27 @@ class MainActivity : AppCompatActivity() {
         binding.latestButton.setOnClickListener {
             binding.gifImg.setImageResource(0)
             gifsList?.clear()
-            typeId = 1
+            Id.typeId = 1
             this.recreate()
         }
 
         binding.hotButton.setOnClickListener {
             binding.gifImg.setImageResource(0)
             gifsList?.clear()
-            typeId = 3
+            Id.typeId = 3
             this.recreate()
         }
 
         binding.topButton.setOnClickListener {
             binding.gifImg.setImageResource(0)
             gifsList?.clear()
-            typeId = 2
+            Id.typeId = 2
             this.recreate()
         }
     }
 
     private fun getDefiniteGif() {
-        when (typeId) {
+        when (Id.typeId) {
             1 -> getGif("latest", (0..2600).random())
             2 -> getGif("top", (0..2600).random())
             3 -> getGif("hot", (0..2600).random())
@@ -133,7 +133,6 @@ class MainActivity : AppCompatActivity() {
                     target: Target<GifDrawable>?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    Log.d("TAG", "error")
                     binding.gifCard.visibility = View.VISIBLE
                     binding.rebootButton.isVisible = true
                     binding.rebootButton.isEnabled = true
@@ -207,4 +206,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+}
+
+object Id{
+    var typeId: Int? = 1
 }
