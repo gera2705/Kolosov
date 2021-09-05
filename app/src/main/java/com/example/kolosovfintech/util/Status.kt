@@ -1,4 +1,4 @@
-package com.example.kolosovfintech
+package com.example.kolosovfintech.util
 
 enum class Status {
     SUCCESS,

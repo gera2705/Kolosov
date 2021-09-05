@@ -10,18 +10,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.kolosovfintech.R
-import com.example.kolosovfintech.Status
+import com.example.kolosovfintech.util.Status
 import com.example.kolosovfintech.api.ApiHelper
 import com.example.kolosovfintech.api.RetrofitInstance
 import com.example.kolosovfintech.databinding.ActivityMainBinding
 import com.example.kolosovfintech.model.Data
 import com.example.kolosovfintech.model.Post
-import java.lang.Exception
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,61 +32,32 @@ class MainActivity : AppCompatActivity() {
 
     private var gifsList: ArrayList<Post>? = arrayListOf()
     private var positionCount = 1
+    private var typeId: Int? = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        setupViewModel()
-
         binding.rebootButton.isVisible = false
         binding.rebootButton.isEnabled = false
 
-        when (Id.itemNumber) {
-            1 -> getGif("top", (0..100).random())
-            2 -> getGif("latest", (0..100).random())
-            3 -> getGif("hot", (0..100).random())
-        }
+        setupViewModel()
+        initListeners()
+        getDefiniteGif()
+    }
+
+    private fun initListeners() {
 
         binding.nextButton.setOnClickListener {
-
-            if (positionCount == 5) {
-                positionCount = 1
-                gifsList?.clear()
+            if (positionCount == gifsList?.size) {
                 binding.gifImg.setImageResource(0)
-
-                when (Id.itemNumber) {
-                    1 -> getGif("latest", (0..100).random())
-                    2 -> getGif("top", (0..100).random())
-                    3 -> getGif("hot", (0..100).random())
-                }
-
+                getDefiniteGif()
+                positionCount++
             } else {
                 setGif(gifsList?.get(positionCount)?.gifURL)
                 setDescription(gifsList?.get(positionCount)?.description)
                 positionCount++
             }
-        }
-
-        binding.latestButton.setOnClickListener {
-            binding.gifImg.setImageResource(0)
-            gifsList?.clear()
-            Id.itemNumber = 1
-            this.recreate()
-        }
-
-        binding.hotButton.setOnClickListener {
-            binding.gifImg.setImageResource(0)
-            gifsList?.clear()
-            Id.itemNumber = 3
-            this.recreate()
-        }
-
-        binding.topButton.setOnClickListener {
-            binding.gifImg.setImageResource(0)
-            gifsList?.clear()
-            Id.itemNumber = 2
-            this.recreate()
         }
 
         binding.backButton.setOnClickListener {
@@ -100,16 +72,42 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.rebootButton.setOnClickListener {
-
-            when (Id.itemNumber) {
-                1 -> getGif("latest", (0..100).random())
-                2 -> getGif("top", (0..100).random())
-                3 -> getGif("hot", (0..100).random())
-            }
-
             binding.rebootButton.isVisible = false
             binding.rebootButton.isEnabled = false
+            if (gifsList?.size == 0) {
+                getDefiniteGif()
+            } else {
+                setGif(gifsList?.get(positionCount - 1)?.gifURL)
+            }
+        }
 
+        binding.latestButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            typeId = 1
+            this.recreate()
+        }
+
+        binding.hotButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            typeId = 3
+            this.recreate()
+        }
+
+        binding.topButton.setOnClickListener {
+            binding.gifImg.setImageResource(0)
+            gifsList?.clear()
+            typeId = 2
+            this.recreate()
+        }
+    }
+
+    private fun getDefiniteGif() {
+        when (typeId) {
+            1 -> getGif("latest", (0..2600).random())
+            2 -> getGif("top", (0..2600).random())
+            3 -> getGif("hot", (0..2600).random())
         }
     }
 
@@ -121,20 +119,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setGif(URL: String?) {
-        try {
-            Glide.with(this@MainActivity)
-                .asGif()
-                .load(URL)
-                .placeholder(R.drawable.progress_bar)
-                .error(R.drawable.ic_error_image)
-                .fallback(R.drawable.ic_error_image)
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                .into(binding.gifImg)
-        }catch (e : GlideException){
-            binding.rebootButton.isVisible = true
 
-        }
+        binding.loadingBar.visibility = View.VISIBLE
+        binding.gifCard.visibility = View.INVISIBLE
+
+        Glide.with(this@MainActivity)
+            .asGif()
+            .load(URL)
+            .listener(object : RequestListener<GifDrawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<GifDrawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    Log.d("TAG", "error")
+                    binding.gifCard.visibility = View.VISIBLE
+                    binding.rebootButton.isVisible = true
+                    binding.rebootButton.isEnabled = true
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: GifDrawable?,
+                    model: Any?,
+                    target: Target<GifDrawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    binding.gifCard.visibility = View.VISIBLE
+                    binding.loadingBar.visibility = View.INVISIBLE
+                    binding.rebootButton.isVisible = false
+                    binding.rebootButton.isEnabled = false
+                    return false
+                }
+            })
+            .error(R.drawable.ic_error_image)
+            .fallback(R.drawable.ic_error_image)
+            .fitCenter()
+            .into(binding.gifImg)
     }
 
     private fun setDescription(description: String?) {
@@ -152,17 +175,15 @@ class MainActivity : AppCompatActivity() {
 
                         val post: Data? = resource.data
 
-                        Log.d("TAG", post.toString())
-
                         post?.dataModelList.let { it1 ->
                             if (it1 != null) {
                                 gifsList?.addAll(it1)
                             }
                         }
 
-                        Log.d("TAG", gifsList.toString())
-
-                        if(gifsList?.size == 0){
+                        if (gifsList?.size == 0) {
+                            binding.gifCard.visibility = View.VISIBLE
+                            binding.rebootButton.isVisible = true
                             binding.gifImg.setImageResource(R.drawable.ic_error_image)
                         }
                         setGif(post!!.dataModelList[0].gifURL)
@@ -170,24 +191,20 @@ class MainActivity : AppCompatActivity() {
                     }
                     Status.ERROR -> {
                         binding.rebootButton.isVisible = true
+                        binding.gifCard.visibility = View.VISIBLE
                         binding.gifImg.setImageResource(R.drawable.ic_error_image)
                         binding.descriptionText.text = "Ошибка"
                         binding.rebootButton.isEnabled = true
-
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     }
                     Status.LOADING -> {
+                        binding.loadingBar.visibility = View.VISIBLE
+                        binding.gifCard.visibility = View.INVISIBLE
                         binding.nextButton.isEnabled = false
                         binding.backButton.isEnabled = false
-                        binding.loadingBar.visibility = View.GONE
-                        Toast.makeText(this, "Загрузка", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         })
     }
-}
-
-object Id {
-    var itemNumber: Int? = 1
 }

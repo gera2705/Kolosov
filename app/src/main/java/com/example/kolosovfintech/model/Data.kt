@@ -11,6 +11,6 @@ data class Data(
 
     @SerializedName("totalCount")
     @Expose
-    val totalCount : Int
+    val totalCount: Int
 
 )
