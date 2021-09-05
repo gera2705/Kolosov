@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">KolosovFintech</string>
+    <string name="app_name">Developers Life</string>
+    <string name="loading_text_view">Загрузка…</string>
+    <string name="reboot_button_text">Повторить</string>
+    <string name="menu_title_random">Рандомный</string>
+    <string name="menu_title_new">Последнее</string>
+    <string name="menu_title_top">Лучшее</string>
+    <string name="menu_title_hot">Горячее</string>
+    <string name="back_button_description">back button</string>
+    <string name="forward_button_description">forward button</string>
+    <string name="gif_image_description">gif image</string>
 </resources>
